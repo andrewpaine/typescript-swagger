@@ -1,8 +1,15 @@
 import * as ts from 'typescript';
 
 export function getDecorators(node: ts.Node, isMatching: (identifier: DecoratorData) => boolean): Array<DecoratorData> {
-    const decorators = node.decorators;
-    if (!decorators || !decorators.length) { return []; }
+    if (!ts.canHaveDecorators(node)) {
+        return [];
+    }
+
+    const decorators = ts.getDecorators(node);
+    
+    if (!decorators || !decorators.length) {
+         return [];
+    }
 
     return decorators
         .map(d => {

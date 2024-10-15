@@ -603,15 +603,22 @@ function getModelTypeAdditionalProperties(node: UsableDeclaration) {
 }
 
 function hasPublicMemberModifier(node: ts.Node) {
-    return !node.modifiers || node.modifiers.every(modifier => {
-        return modifier.kind !== ts.SyntaxKind.ProtectedKeyword && modifier.kind !== ts.SyntaxKind.PrivateKeyword;
-    });
+    if (ts.canHaveModifiers(node)) {
+        const modifiers = ts.getModifiers(node);
+        return !modifiers || modifiers.every((modifier) => ![ts.SyntaxKind.ProtectedKeyword, ts.SyntaxKind.PrivateKeyword].includes(modifier.kind));
+    }
+
+    return true;
 }
 
 function hasPublicConstructorModifier(node: ts.Node) {
-    return node.modifiers && node.modifiers.some(modifier => {
-        return modifier.kind === ts.SyntaxKind.PublicKeyword;
-    });
+
+    if (ts.canHaveModifiers(node)) {
+        const modifiers = ts.getModifiers(node);
+        return modifiers && modifiers.some((modifier) => modifier.kind === ts.SyntaxKind.PublicKeyword);
+    }
+
+    return false;
 }
 
 function getInheritedProperties(modelTypeDeclaration: UsableDeclaration, genericTypes?: Array<ts.TypeNode>): Array<Property> {
