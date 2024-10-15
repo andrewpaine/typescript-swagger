@@ -441,6 +441,16 @@ function getModelTypeDeclaration(type: ts.EntityName) {
 }
 
 function getModelTypeProperties(node: any, genericTypes?: Array<ts.TypeNode>): Array<Property> {
+
+    if (node.kind === ts.SyntaxKind.IntersectionType) {
+        // Handle IntersectionType by combining properties from each type in the intersection
+        const intersectionTypeNode = node as ts.IntersectionTypeNode;
+
+        // Recursively get properties from each type in the intersection and merge them
+        return intersectionTypeNode.types.reduce((properties, typeNode) => {
+            return properties.concat(getModelTypeProperties(typeNode, genericTypes));
+        }, [] as Array<Property>);
+    }
     if (node.kind === ts.SyntaxKind.TypeLiteral || node.kind === ts.SyntaxKind.InterfaceDeclaration) {
         const interfaceDeclaration = node as ts.InterfaceDeclaration;
         return interfaceDeclaration.members
