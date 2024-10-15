@@ -451,6 +451,30 @@ function getModelTypeProperties(node: any, genericTypes?: Array<ts.TypeNode>): A
             return properties.concat(getModelTypeProperties(typeNode, genericTypes));
         }, [] as Array<Property>);
     }
+
+    if (node.kind === ts.SyntaxKind.TypeReference) {
+        // Handle TypeReference by resolving the type it refers to
+        const typeReferenceNode = node as ts.TypeReferenceNode;
+
+        // Use the TypeScript type checker to resolve the TypeReference to its declaration
+        const typeChecker = MetadataGenerator.current.typeChecker;  // Assuming you have access to a type checker instance
+        const symbol = typeChecker.getSymbolAtLocation(typeReferenceNode.typeName);
+
+        if (symbol) {
+            const declarations = symbol.getDeclarations();
+
+            if (declarations && declarations.length > 0) {
+                // Process the first declaration (could be an interface, class, or type alias)
+                const resolvedDeclaration = declarations[0];
+
+                // Recursively call getModelTypeProperties on the resolved declaration
+                return getModelTypeProperties(resolvedDeclaration, genericTypes);
+            }
+        }
+
+        throw new Error('Failed to resolve TypeReference.');
+    }
+
     if (node.kind === ts.SyntaxKind.TypeLiteral || node.kind === ts.SyntaxKind.InterfaceDeclaration) {
         const interfaceDeclaration = node as ts.InterfaceDeclaration;
         return interfaceDeclaration.members
