@@ -3,6 +3,23 @@
 [![Coverage Status](https://coveralls.io/repos/github/thiagobustamante/typescript-rest-swagger/badge.svg?branch=master)](https://coveralls.io/github/thiagobustamante/typescript-rest-swagger?branch=master)
 [![Known Vulnerabilities](https://snyk.io/test/github/thiagobustamante/typescript-rest-swagger/badge.svg?targetFile=package.json)](https://snyk.io/test/github/thiagobustamante/typescript-rest-swagger?targetFile=package.json)
 
+
+This has been forked from typescript-rest-swagger with the following changes by ADNP:
+- updated typescript version to 5.8.3
+- added support for Intersection and reference types
+- Remove dependency on typescript-rest project
+
+The goal is for this to be a dev dependency that runs at compile time to build OpenAPI documentation for an annotated API.
+There should be no dependency on Express or any implementation details about how the requests are served.
+
+To use:
+Build with `npm run build`
+run `npm link` in this folder
+run `npm link typescript-swagger` in the target folder
+Add a script with `"swagger": "npx typescript-swagger -c swaggerConfig.json"` or similar in your linked project where you want the documentation
+
+
+
 # Swagger for Typescript-rest
 This is a tool to generate swagger files from a [typescript-rest](https://github.com/thiagobustamante/typescript-rest) project.
 
