@@ -3,8 +3,7 @@
 
 import { ArgumentParser } from 'argparse';
 import * as debug from 'debug';
-import * as fs from 'fs-extra-promise';
-import * as _ from 'lodash';
+import * as fs from 'fs';
 import { isAbsolute, join } from 'path';
 import * as path from 'path';
 import * as ts from 'typescript';
@@ -83,13 +82,13 @@ function getPackageJsonValue(key: string): string {
 
 function getConfig(configPath = 'swagger.json'): Config {
     const configFile = `${workingDir}/${configPath}`;
-    if (_.endsWith(configFile, '.yml') || _.endsWith(configFile, '.yaml')) {
+    if (configFile.endsWith('.yml') || configFile.endsWith('.yaml')) {
         return YAML.load(configFile);
-    } else if (_.endsWith(configFile, '.js')) {
+    } else if (configFile.endsWith('.js')) {
         return require(path.join(configFile));
     }
     else {
-        return fs.readJSONSync(configFile);
+        return JSON.parse(fs.readFileSync(configFile).toString('utf8'));
     }
 }
 
