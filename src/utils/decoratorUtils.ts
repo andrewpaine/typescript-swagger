@@ -1,5 +1,7 @@
 import * as ts from 'typescript';
 
+import { MetadataGenerator } from '../metadata/metadataGenerator';
+
 export function getDecorators(node: ts.Node, isMatching: (identifier: DecoratorData) => boolean): Array<DecoratorData> {
     if (!ts.canHaveDecorators(node)) {
         return [];
@@ -55,7 +57,35 @@ export function getDecoratorName(node: ts.Node, isMatching: (identifier: Decorat
 
 export function getDecoratorTextValue(node: ts.Node, isMatching: (identifier: DecoratorData) => boolean) {
     const decorator = getDecorator(node, isMatching);
-    return decorator && typeof decorator.arguments[0] === 'string' ? decorator.arguments[0] as string : undefined;
+    
+    if (!decorator || !decorator.arguments.length) {
+        return undefined;
+    }
+
+    const arg = decorator.arguments[0];
+    if (typeof arg === 'string') {
+        return arg;
+    }
+
+    if (ts.isStringLiteral(arg)) {
+        return arg.text;
+    }
+
+    if (ts.isIdentifier(arg) || ts.isPropertyAccessExpression(arg)) {
+
+        const symbol = MetadataGenerator.current.typeChecker.getSymbolAtLocation(arg);
+        if (symbol && symbol.valueDeclaration) {
+            const declaration = symbol.valueDeclaration;
+            if (ts.isVariableDeclaration(declaration) || ts.isPropertyDeclaration(declaration)) {
+                if (declaration.initializer && ts.isStringLiteral(declaration.initializer)) {
+                    return declaration.initializer.text;
+                }
+            }
+        }
+    }
+
+    return undefined;
+    // return decorator && typeof decorator.arguments[0] === 'string' ? decorator.arguments[0] as string : undefined;
 }
 
 export function getDecoratorOptions(node: ts.Node, isMatching: (identifier: DecoratorData) => boolean) {
