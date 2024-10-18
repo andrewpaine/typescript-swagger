@@ -32,7 +32,7 @@ export function resolveType(typeNode?: ts.TypeNode, genericTypeMap?: Map<String,
         } as ArrayType;
     }
 
-    if ((typeNode.kind === ts.SyntaxKind.AnyKeyword) || (typeNode.kind === ts.SyntaxKind.ObjectKeyword)) {
+    if ((typeNode.kind === ts.SyntaxKind.AnyKeyword) || (typeNode.kind === ts.SyntaxKind.ObjectKeyword) || (typeNode.kind === ts.SyntaxKind.UnknownKeyword)) {
         return { typeName: 'object' };
     }
 
