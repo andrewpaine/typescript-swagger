@@ -128,7 +128,7 @@ function getPrimitiveType(typeNode: ts.TypeNode): Type | undefined {
             case 'IsDouble':
                 return { typeName: 'double' };
             default:
-                return { typeName: 'double' };
+                return {typeName: 'number'};
         }
     }
     return { typeName: primitiveType };

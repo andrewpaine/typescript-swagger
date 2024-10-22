@@ -370,6 +370,7 @@ export class SpecGenerator {
             object: { type: 'object' },
             string: { type: 'string' },
             void: { type: 'void' },
+            number: {type: 'number', format: ''}
         };
 
         return typeMap[type.typeName];
