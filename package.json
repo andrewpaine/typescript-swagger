@@ -1,16 +1,13 @@
 {
   "name": "typescript-swagger",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Generate Swagger files from a typescript project with suitably annotated methods.",
   "keywords": [
     "typescript",
-    "typescript-rest",
+    "rest",
     "swagger",
     "open api",
-    "rest",
-    "microservice",
-    "codegen",
-    "generation"
+    "rest"
   ],
   "main": "./dist/decorators.js",
   "typings": "./dist/decorators.d.ts",
