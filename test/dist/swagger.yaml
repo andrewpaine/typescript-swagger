@@ -1,0 +1,951 @@
+basePath: /v1
+definitions:
+    MytypeWithUnion:
+        description: ""
+        properties:
+            property:
+                enum:
+                    - value1
+                    - value2
+                type: string
+                description: ""
+        type: object
+        required:
+            - property
+    Address:
+        description: ""
+        properties:
+            street:
+                type: string
+                description: ""
+        type: object
+        required:
+            - street
+    Person:
+        description: ""
+        properties:
+            name:
+                type: string
+                description: ""
+            address:
+                $ref: '#/definitions/Address'
+        type: object
+        required:
+            - name
+    TestInterface:
+        description: ""
+        properties:
+            a:
+                type: string
+                description: ""
+            b:
+                type: number
+                format: double
+                description: ""
+        type: object
+        required:
+            - a
+            - b
+    MyDatatype:
+        description: ""
+        properties:
+            property1:
+                type: string
+                description: ""
+            id:
+                type: number
+                format: double
+                description: ""
+        type: object
+        required:
+            - property1
+            - id
+    MyDatatype2:
+        description: ""
+        properties:
+            property1:
+                type: string
+                description: ""
+            prop:
+                type: string
+                description: ""
+        type: object
+        required:
+            - property1
+            - prop
+    UUID:
+        description: ""
+        properties: {}
+        type: object
+    Something:
+        description: ""
+        properties:
+            id:
+                $ref: '#/definitions/UUID'
+            someone:
+                type: string
+                description: ""
+            kind:
+                type: string
+                description: ""
+        type: object
+        required:
+            - id
+            - someone
+            - kind
+    SimpleHelloType:
+        description: ""
+        properties:
+            greeting:
+                type: string
+                description: 'Description for greeting property'
+            arrayOfSomething:
+                type: array
+                items:
+                    $ref: '#/definitions/Something'
+                description: ""
+            profile:
+                type: object
+                properties:
+                    name:
+                        type: string
+                        description: 'Description for profile name'
+                description: 'Description for profile'
+        type: object
+        required:
+            - greeting
+            - arrayOfSomething
+            - profile
+    PrimitiveClassModel:
+        description: ""
+        properties:
+            int:
+                type: integer
+                format: int32
+                description: 'An integer'
+            long:
+                type: integer
+                format: int64
+                description: ""
+            float:
+                type: number
+                format: float
+                description: ""
+            double:
+                type: number
+                format: double
+                description: ""
+        type: object
+    PrimitiveInterfaceModel:
+        description: ""
+        properties:
+            int:
+                type: integer
+                format: int32
+                description: 'An integer'
+            long:
+                type: integer
+                format: int64
+                description: ""
+            float:
+                type: number
+                format: float
+                description: ""
+            double:
+                type: number
+                format: double
+                description: ""
+        type: object
+    ResponseBodystringArray:
+        description: ""
+        properties:
+            data:
+                type: array
+                items:
+                    type: string
+                description: ""
+        type: object
+        required:
+            - data
+    NamedEntity:
+        description: ""
+        properties:
+            id:
+                type: number
+                format: double
+                description: 'A numeric identifier'
+            name:
+                type: string
+                description: ""
+        type: object
+        required:
+            - id
+            - name
+info:
+    description: 'a description'
+    license:
+        name: MIT
+    title: 'Typescript-rest Test API'
+    version: '1.0'
+paths:
+    /unionTypes:
+        post:
+            operationId: TestUnionTypePost
+            produces:
+                - text/html
+            responses:
+                '200':
+                    description: Ok
+                    schema:
+                        type: string
+            description: ""
+            consumes:
+                - application/json
+            parameters:
+                -
+                    description: ""
+                    in: body
+                    name: body
+                    required: true
+                    schema:
+                        $ref: '#/definitions/MytypeWithUnion'
+    /mypath:
+        get:
+            operationId: MyServiceTest
+            produces:
+                - text/html
+            responses:
+                '200':
+                    description: Ok
+                    schema:
+                        type: string
+                '400':
+                    description: 'The request format was incorrect.'
+                    schema:
+                        type: string
+                '500':
+                    description: 'There was an unexpected error.'
+                    schema:
+                        type: string
+                default:
+                    description: Error
+                    schema:
+                        type: string
+            description: ""
+            tags:
+                - 'My Services'
+            parameters: []
+        post:
+            operationId: MyServiceTestPostString
+            produces:
+                - application/json
+            responses:
+                '200':
+                    description: Ok
+                    schema:
+                        type: array
+                        items:
+                            $ref: '#/definitions/Person'
+                    examples:
+                        application/json:
+                            -
+                                name: Joe
+            description: ""
+            tags:
+                - 'My Services'
+            consumes:
+                - application/json
+            parameters:
+                -
+                    description: ""
+                    in: body
+                    name: body
+                    required: true
+                    schema:
+                        type: string
+    /mypath/secondpath:
+        get:
+            operationId: MyServiceTest2
+            produces:
+                - application/json
+            responses:
+                '200':
+                    description: 'The success test.'
+                    schema:
+                        $ref: '#/definitions/Person'
+                    examples:
+                        application/json:
+                            name: Joe
+            description: 'This is the method description'
+            tags:
+                - 'My Services'
+            parameters:
+                -
+                    description: 'This is the test param description'
+                    in: query
+                    name: testRequired
+                    required: true
+                    type: string
+                -
+                    description: ""
+                    in: query
+                    name: testDefault
+                    required: false
+                    type: string
+                    default: value
+                -
+                    description: ""
+                    in: query
+                    name: testOptional
+                    required: false
+                    type: string
+                -
+                    description: ""
+                    in: query
+                    name: testEnum
+                    required: false
+                    type: string
+                    enum:
+                        - option1
+                        - option2
+                -
+                    description: ""
+                    in: query
+                    name: testNumericEnum
+                    required: false
+                    type: number
+                    enum:
+                        - 0
+                        - 1
+                -
+                    description: ""
+                    in: query
+                    name: testMixedEnum
+                    required: false
+                    type: string
+                    enum:
+                        - 0
+                        - 'String param'
+    /mypath/obj:
+        post:
+            operationId: MyServiceTestPostObject
+            produces:
+                - text/html
+            responses:
+                '204':
+                    description: 'No content'
+            description: ""
+            tags:
+                - 'My Services'
+            consumes:
+                - application/json
+            parameters:
+                -
+                    description: ""
+                    in: body
+                    name: data
+                    required: true
+                    schema:
+                        type: object
+    /mypath/multi-query:
+        get:
+            operationId: MyServiceTestMultiQuery
+            produces:
+                - text/html
+            responses:
+                '204':
+                    description: 'No content'
+            description: ""
+            tags:
+                - 'My Services'
+            parameters:
+                -
+                    description: ""
+                    in: query
+                    name: id
+                    required: true
+                    type: array
+                    items:
+                        type: string
+                -
+                    description: ""
+                    in: query
+                    name: name
+                    required: false
+                    type: array
+                    items:
+                        type: string
+    /mypath/default-query:
+        get:
+            operationId: MyServiceTestDefaultQuery
+            produces:
+                - text/html
+            responses:
+                '204':
+                    description: 'No content'
+            description: ""
+            tags:
+                - 'My Services'
+            parameters:
+                -
+                    description: ""
+                    in: query
+                    name: num
+                    required: false
+                    type: number
+                    format: double
+                    default: 5
+                -
+                    description: ""
+                    in: query
+                    name: str
+                    required: false
+                    type: string
+                    default: 'default value'
+                -
+                    description: ""
+                    in: query
+                    name: bool1
+                    required: false
+                    type: boolean
+                    default: true
+                -
+                    description: ""
+                    in: query
+                    name: bool2
+                    required: false
+                    type: boolean
+                    default: false
+                -
+                    description: ""
+                    in: query
+                    name: arr
+                    required: false
+                    type: array
+                    items:
+                        type: string
+                    default:
+                        - a
+                        - b
+                        - c
+    /mypath/test-compiler-options:
+        post:
+            operationId: MyServiceTestCompilerOptions
+            produces:
+                - application/json
+            responses:
+                '200':
+                    description: Ok
+                    schema:
+                        $ref: '#/definitions/TestInterface'
+            description: ""
+            tags:
+                - 'My Services'
+            consumes:
+                - application/json
+            parameters:
+                -
+                    description: ""
+                    in: body
+                    name: payload
+                    required: true
+                    schema:
+                        $ref: '#/definitions/TestInterface'
+    /mypath/test-form-param:
+        post:
+            operationId: MyServiceTestFormParam
+            produces:
+                - text/html
+            responses:
+                '200':
+                    description: Ok
+                    schema:
+                        type: string
+            description: ""
+            tags:
+                - 'My Services'
+            consumes:
+                - application/x-www-form-urlencoded
+            parameters:
+                -
+                    description: ""
+                    in: formData
+                    name: id
+                    required: true
+                    type: string
+    /promise:
+        get:
+            operationId: PromiseServiceTest
+            produces:
+                - text/html
+                - application/json
+            responses:
+                '200':
+                    description: Ok
+                    schema:
+                        $ref: '#/definitions/Person'
+                '401':
+                    description: Unauthorized
+                    schema:
+                        type: string
+            description: 'Esta eh a da classe'
+            parameters:
+                -
+                    description: 'Esta eh a description do param teste'
+                    in: query
+                    name: testParam
+                    required: false
+                    type: string
+        post:
+            operationId: PromiseServiceTestPost
+            produces:
+                - application/json
+                - text/html
+            responses:
+                '201':
+                    description: 'Person Created'
+                    schema:
+                        $ref: '#/definitions/Person'
+                    examples:
+                        application/json:
+                            name: 'Test Person'
+                '401':
+                    description: Unauthorized
+                    schema:
+                        type: string
+            description: ""
+            consumes:
+                - application/json
+            parameters:
+                -
+                    description: ""
+                    in: body
+                    name: obj
+                    required: true
+                    schema:
+                        $ref: '#/definitions/Person'
+    '/promise/{id}':
+        get:
+            operationId: PromiseServiceTestGetSingle
+            produces:
+                - application/json
+                - text/html
+            responses:
+                '200':
+                    description: 'All Good'
+                    schema:
+                        $ref: '#/definitions/Person'
+                    examples:
+                        application/json:
+                            name: 'Test Person'
+                '401':
+                    description: Unauthorized
+                    schema:
+                        type: string
+            description: ""
+            parameters:
+                -
+                    description: ""
+                    in: path
+                    name: id
+                    required: true
+                    type: string
+        delete:
+            operationId: PromiseServiceTestDelete
+            produces:
+                - text/html
+            responses:
+                '204':
+                    description: 'No content'
+            description: ""
+            parameters:
+                -
+                    description: ""
+                    in: path
+                    name: id
+                    required: true
+                    type: string
+    /promise/myFile:
+        get:
+            operationId: PromiseServiceTestFile
+            produces:
+                - application/pdf
+            responses:
+                '200':
+                    description: Ok
+                    schema:
+                        type: file
+            description: ""
+            parameters:
+                -
+                    description: ""
+                    in: query
+                    name: testParam
+                    required: false
+                    type: string
+    '/generics1/{param}':
+        get:
+            operationId: DerivedEndpointTest
+            produces:
+                - text/html
+            responses:
+                '204':
+                    description: 'No content'
+            description: ""
+            parameters:
+                -
+                    description: ""
+                    in: path
+                    name: param
+                    required: true
+                    type: string
+    /generics1:
+        post:
+            operationId: DerivedEndpointSave
+            produces:
+                - text/html
+            responses:
+                '201':
+                    description: Ok
+                    schema:
+                        type: number
+                        format: double
+            description: ""
+            consumes:
+                - application/json
+            parameters:
+                -
+                    description: ""
+                    in: body
+                    name: entity
+                    required: true
+                    schema:
+                        $ref: '#/definitions/MyDatatype'
+    '/generics1/{id}':
+        put:
+            operationId: DerivedEndpointUpdate
+            produces:
+                - text/html
+            responses:
+                '204':
+                    description: 'No content'
+            description: ""
+            consumes:
+                - application/json
+            parameters:
+                -
+                    description: ""
+                    in: path
+                    name: id
+                    required: true
+                    type: number
+                    format: double
+                -
+                    description: ""
+                    in: body
+                    name: entity
+                    required: true
+                    schema:
+                        $ref: '#/definitions/MyDatatype'
+        delete:
+            operationId: DerivedEndpointRemove
+            produces:
+                - text/html
+            responses:
+                '204':
+                    description: 'No content'
+            description: ""
+            parameters:
+                -
+                    description: ""
+                    in: path
+                    name: id
+                    required: true
+                    type: string
+        get:
+            operationId: DerivedEndpointGet
+            produces:
+                - application/json
+            responses:
+                '200':
+                    description: Ok
+                    schema:
+                        $ref: '#/definitions/MyDatatype'
+            description: ""
+            parameters:
+                -
+                    description: ""
+                    in: path
+                    name: id
+                    required: true
+                    type: string
+    '/generics2/{param}':
+        get:
+            operationId: DerivedEndpoint2Test
+            produces:
+                - application/json
+            responses:
+                '200':
+                    description: Ok
+                    schema:
+                        $ref: '#/definitions/MyDatatype2'
+            description: ""
+            parameters:
+                -
+                    description: ""
+                    in: path
+                    name: param
+                    required: true
+                    type: string
+    '/type/{param}':
+        get:
+            operationId: TypeEndpointTest
+            produces:
+                - application/json
+            responses:
+                '200':
+                    description: Ok
+                    schema:
+                        $ref: '#/definitions/MyDatatype2'
+            description: ""
+            parameters:
+                -
+                    description: ""
+                    in: path
+                    name: param
+                    required: true
+                    type: string
+    '/type/{param}/2':
+        get:
+            operationId: TypeEndpointTest2
+            produces:
+                - application/json
+            responses:
+                '200':
+                    description: Ok
+                    schema:
+                        $ref: '#/definitions/SimpleHelloType'
+            description: ""
+            parameters:
+                -
+                    description: ""
+                    in: path
+                    name: param
+                    required: true
+                    type: string
+    /primitives/class:
+        get:
+            operationId: PrimitiveEndpointGetClass
+            produces:
+                - application/json
+            responses:
+                '200':
+                    description: Ok
+                    schema:
+                        $ref: '#/definitions/PrimitiveClassModel'
+            description: ""
+            parameters: []
+    /primitives/interface:
+        get:
+            operationId: PrimitiveEndpointTestInterface
+            produces:
+                - application/json
+            responses:
+                '200':
+                    description: Ok
+                    schema:
+                        $ref: '#/definitions/PrimitiveInterfaceModel'
+            description: ""
+            parameters: []
+    '/primitives/{id}':
+        get:
+            operationId: PrimitiveEndpointGetById
+            produces:
+                - text/html
+            responses:
+                '204':
+                    description: 'No content'
+            description: ""
+            parameters:
+                -
+                    description: ""
+                    in: path
+                    name: id
+                    required: true
+                    type: integer
+                    format: int64
+    /primitives/arrayNative:
+        get:
+            operationId: PrimitiveEndpointGetArrayNative
+            produces:
+                - application/json
+            responses:
+                '200':
+                    description: Ok
+                    schema:
+                        $ref: '#/definitions/ResponseBodystringArray'
+            description: ""
+            parameters: []
+    /primitives/array:
+        get:
+            operationId: PrimitiveEndpointGetArray
+            produces:
+                - application/json
+            responses:
+                '200':
+                    description: Ok
+                    schema:
+                        $ref: '#/definitions/ResponseBodystringArray'
+            description: ""
+            parameters: []
+    '/parameterized/{objectId}/test':
+        get:
+            operationId: ParameterizedEndpointTest
+            produces:
+                - application/json
+            responses:
+                '200':
+                    description: Ok
+                    schema:
+                        $ref: '#/definitions/PrimitiveClassModel'
+            description: ""
+            parameters:
+                -
+                    description: ""
+                    in: path
+                    name: objectId
+                    required: true
+                    type: string
+    /abstract:
+        get:
+            operationId: AbstractEntityEndpointGet
+            produces:
+                - application/json
+            responses:
+                '200':
+                    description: Ok
+                    schema:
+                        $ref: '#/definitions/NamedEntity'
+            description: ""
+            parameters: []
+    /secure:
+        get:
+            operationId: SecureEndpointGet
+            produces:
+                - text/html
+            responses:
+                '200':
+                    description: Ok
+                    schema:
+                        type: string
+            description: ""
+            security:
+                -
+                    access_token:
+                        - ROLE_1
+                        - ROLE_2
+            parameters: []
+        post:
+            operationId: SecureEndpointPost
+            produces:
+                - text/html
+            responses:
+                '200':
+                    description: Ok
+                    schema:
+                        type: string
+            description: ""
+            security:
+                -
+                    user_email: []
+            consumes:
+                - application/json
+            parameters: []
+    /supersecure:
+        get:
+            operationId: SuperSecureEndpointGet
+            produces:
+                - text/html
+            responses:
+                '200':
+                    description: Ok
+                    schema:
+                        type: string
+            description: ""
+            security:
+                -
+                    default:
+                        - access_token
+                -
+                    default:
+                        - user_email
+                -
+                    default: []
+            parameters: []
+    /response:
+        get:
+            operationId: ResponseGet
+            produces:
+                - text/html
+            responses:
+                '200':
+                    description: Ok
+                    schema:
+                        type: string
+                '400':
+                    description: 'The request format was incorrect.'
+                    schema:
+                        type: string
+                '500':
+                    description: 'There was an unexpected error.'
+                    schema:
+                        type: string
+            description: ""
+            parameters: []
+    /response/test:
+        get:
+            operationId: ResponseTest
+            produces:
+                - text/html
+            responses:
+                '200':
+                    description: Ok
+                    schema:
+                        type: string
+                '400':
+                    description: 'The request format was incorrect.'
+                    schema:
+                        type: string
+                '401':
+                    description: Unauthorized.
+                    schema:
+                        type: string
+                '500':
+                    description: 'There was an unexpected error.'
+                    schema:
+                        type: string
+                '502':
+                    description: 'Internal server error.'
+                    schema:
+                        type: string
+            description: ""
+            parameters: []
+swagger: '2.0'
+securityDefinitions:
+    api_key:
+        type: apiKey
+        name: access_token
+        in: query
+    access_token:
+        type: apiKey
+        name: authorization
+        in: header
+    user_email:
+        type: apiKey
+        name: x-user-email
+        in: header
+host: 'localhost:3000'
+api_key:
+    type: apiKey
+    name: api_key
+    in: header
