@@ -32,7 +32,7 @@ export function resolveType(typeNode?: ts.TypeNode, genericTypeMap?: Map<String,
         } as ArrayType;
     }
 
-    if ((typeNode.kind === ts.SyntaxKind.AnyKeyword) || (typeNode.kind === ts.SyntaxKind.ObjectKeyword)) {
+    if ((typeNode.kind === ts.SyntaxKind.AnyKeyword) || (typeNode.kind === ts.SyntaxKind.ObjectKeyword) || (typeNode.kind === ts.SyntaxKind.UnknownKeyword)) {
         return { typeName: 'object' };
     }
 
@@ -44,6 +44,9 @@ export function resolveType(typeNode?: ts.TypeNode, genericTypeMap?: Map<String,
         return getUnionType(typeNode);
     }
 
+    if (typeNode.kind === ts.SyntaxKind.TupleType) {
+        return { typeName: 'object' };
+    }
     if (typeNode.kind !== ts.SyntaxKind.TypeReference) {
         throw new Error(`Unknown type: ${ts.SyntaxKind[typeNode.kind]}`);
     }
@@ -128,7 +131,7 @@ function getPrimitiveType(typeNode: ts.TypeNode): Type | undefined {
             case 'IsDouble':
                 return { typeName: 'double' };
             default:
-                return { typeName: 'double' };
+                return {typeName: 'number'};
         }
     }
     return { typeName: primitiveType };
@@ -441,6 +444,40 @@ function getModelTypeDeclaration(type: ts.EntityName) {
 }
 
 function getModelTypeProperties(node: any, genericTypes?: Array<ts.TypeNode>): Array<Property> {
+
+    if (node.kind === ts.SyntaxKind.IntersectionType) {
+        // Handle IntersectionType by combining properties from each type in the intersection
+        const intersectionTypeNode = node as ts.IntersectionTypeNode;
+
+        // Recursively get properties from each type in the intersection and merge them
+        return intersectionTypeNode.types.reduce((properties, typeNode) => {
+            return properties.concat(getModelTypeProperties(typeNode, genericTypes));
+        }, [] as Array<Property>);
+    }
+
+    if (node.kind === ts.SyntaxKind.TypeReference) {
+        // Handle TypeReference by resolving the type it refers to
+        const typeReferenceNode = node as ts.TypeReferenceNode;
+
+        // Use the TypeScript type checker to resolve the TypeReference to its declaration
+        const typeChecker = MetadataGenerator.current.typeChecker;  // Assuming you have access to a type checker instance
+        const symbol = typeChecker.getSymbolAtLocation(typeReferenceNode.typeName);
+
+        if (symbol) {
+            const declarations = symbol.getDeclarations();
+
+            if (declarations && declarations.length > 0) {
+                // Process the first declaration (could be an interface, class, or type alias)
+                const resolvedDeclaration = declarations[0];
+
+                // Recursively call getModelTypeProperties on the resolved declaration
+                return getModelTypeProperties(resolvedDeclaration, genericTypes);
+            }
+        }
+
+        throw new Error('Failed to resolve TypeReference.');
+    }
+
     if (node.kind === ts.SyntaxKind.TypeLiteral || node.kind === ts.SyntaxKind.InterfaceDeclaration) {
         const interfaceDeclaration = node as ts.InterfaceDeclaration;
         return interfaceDeclaration.members
@@ -569,15 +606,22 @@ function getModelTypeAdditionalProperties(node: UsableDeclaration) {
 }
 
 function hasPublicMemberModifier(node: ts.Node) {
-    return !node.modifiers || node.modifiers.every(modifier => {
-        return modifier.kind !== ts.SyntaxKind.ProtectedKeyword && modifier.kind !== ts.SyntaxKind.PrivateKeyword;
-    });
+    if (ts.canHaveModifiers(node)) {
+        const modifiers = ts.getModifiers(node);
+        return !modifiers || modifiers.every((modifier) => ![ts.SyntaxKind.ProtectedKeyword, ts.SyntaxKind.PrivateKeyword].includes(modifier.kind));
+    }
+
+    return true;
 }
 
 function hasPublicConstructorModifier(node: ts.Node) {
-    return node.modifiers && node.modifiers.some(modifier => {
-        return modifier.kind === ts.SyntaxKind.PublicKeyword;
-    });
+
+    if (ts.canHaveModifiers(node)) {
+        const modifiers = ts.getModifiers(node);
+        return modifiers && modifiers.some((modifier) => modifier.kind === ts.SyntaxKind.PublicKeyword);
+    }
+
+    return false;
 }
 
 function getInheritedProperties(modelTypeDeclaration: UsableDeclaration, genericTypes?: Array<ts.TypeNode>): Array<Property> {

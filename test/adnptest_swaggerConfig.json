@@ -1,0 +1,16 @@
+{
+    "swagger": {
+        "basePath": "/api/v1",
+        "outputDirectory": "./doc",
+        "entryFile": "/Users/andrewpaine/Local/dev/serverless/aible-anywhere-aws/ts/handler.ts",
+        "yaml": false,
+        "outputFormat": "OpenApi_3",
+        "securityDefinitions": {
+            "BearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    }
+}
