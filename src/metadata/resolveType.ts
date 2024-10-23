@@ -44,6 +44,9 @@ export function resolveType(typeNode?: ts.TypeNode, genericTypeMap?: Map<String,
         return getUnionType(typeNode);
     }
 
+    if (typeNode.kind === ts.SyntaxKind.TupleType) {
+        return { typeName: 'object' };
+    }
     if (typeNode.kind !== ts.SyntaxKind.TypeReference) {
         throw new Error(`Unknown type: ${ts.SyntaxKind[typeNode.kind]}`);
     }
