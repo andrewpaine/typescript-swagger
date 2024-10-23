@@ -1,6 +1,6 @@
 # Swagger Documentation Generator for Typescript Project
 
-This project is a fork version [thiagobustamante/typescript-rest-swagger](https://github.com/thiagobustamante/typescript-rest-swagger)
+This project is a fork of [thiagobustamante/typescript-rest-swagger](https://github.com/thiagobustamante/typescript-rest-swagger)
 
 It also includes some of the decorator definitions declared in [thiagobustamante/typescript-rest](https://github.com/thiagobustamante/typescript-rest) - see 
 `src/decorators` folder
